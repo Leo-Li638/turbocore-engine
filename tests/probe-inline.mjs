@@ -1,0 +1,13 @@
+import { readFile } from 'node:fs/promises';
+const js = await readFile('E:\\developer-file\\dev\\DeepseekHarness\\work\\turbocore-engine\\dist\\assets\\index-BAOWPrAb.js', 'utf8');
+console.log('js chars:', js.length, 'bytes:', Buffer.byteLength(js));
+console.log('js has </script:', (js.match(/<\/script/gi) || []).length, ' has <script:', (js.match(/<script/gi) || []).length);
+console.log('js has import.meta:', js.includes('import.meta'), ' top-level import:', /^import /m.test(js), ' export:', /\bexport\s/.test(js));
+const html = await readFile('E:\\developer-file\\dev\\DeepseekHarness\\work\\turbocore-engine\\dist\\turbocore-standalone.html', 'utf8');
+const opens = [...html.matchAll(/<script/gi)].map(m => m.index);
+const closes = [...html.matchAll(/<\/script/gi)].map(m => m.index);
+console.log('html opens at:', opens, 'closes at:', closes);
+for (const c of closes) console.log('close ctx:', JSON.stringify(html.slice(Math.max(0, c - 90), c + 20)));
+const start = html.indexOf('<script>') + '<script>'.length;
+const end = html.indexOf('</script>', start);
+console.log('inline len:', end - start, 'first 120:', JSON.stringify(html.slice(start, start + 120)));

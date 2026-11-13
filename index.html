@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#030810" />
+  <title>TURBOCORE · 涡扇发动机 3D 爆炸分解演示</title>
+  <link rel="stylesheet" href="/src/styles/tokens.css" />
+  <link rel="stylesheet" href="/src/styles/ui.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="viewport"></div>
+    <div id="label-layer"></div>
+
+    <div id="hud-capsule">
+      <span class="hud-live"><i class="hud-dot"></i>REALTIME 3D</span>
+      <span id="hud-status" class="hud-status">ASSEMBLY</span>
+      <span id="hud-status-zh" class="hud-status-zh">完整装配状态</span>
+    </div>
+    <div id="hud-stats">
+      <div>方位角 <span class="mono" id="hud-az">--°</span></div>
+      <div>仰角 <span class="mono" id="hud-el">--°</span></div>
+      <div>FPS <span class="mono" id="hud-fps">--</span></div>
+      <div>三角面 <span class="mono" id="hud-tris">--</span></div>
+      <div>DRAWCALL <span class="mono" id="hud-calls">--</span></div>
+    </div>
+
+    <header id="topbar">
+      <div class="tb-left">
+        <button id="btn-drawer-left" class="icon-btn tb-drawer" aria-label="打开结构树">☰</button>
+        <div class="brand">
+          <span class="brand-logo">◤</span>
+          <div class="brand-text">
+            <div class="brand-name">TURBOCORE</div>
+            <div class="brand-sub">TC-X135 高涵道比涡扇发动机 · 数字孪生 3D 爆炸分解</div>
+          </div>
+        </div>
+      </div>
+      <div class="tb-center">
+        <span class="status-dot"></span><span class="status-online">ONLINE</span>
+        <span class="tb-sep">|</span><span class="mono" id="tb-model">TC-X135</span>
+        <span class="tb-sep">|</span><span class="mono"><span id="tb-fps">--</span> FPS</span>
+      </div>
+      <div class="tb-right">
+        <div class="mode-tabs" id="mode-tabs">
+          <button class="mode-tab active" data-mode="assembly" title="装配模式 (1)"><span class="mode-num">01</span><span class="mode-zh">装配</span></button>
+          <button class="mode-tab" data-mode="explode" title="分解模式 (2)"><span class="mode-num">02</span><span class="mode-zh">分解</span></button>
+          <button class="mode-tab" data-mode="section" title="剖切模式 (3)"><span class="mode-num">03</span><span class="mode-zh">剖切</span></button>
+        </div>
+        <button id="btn-reset-view" class="icon-btn" title="重置视角 (V)">⌂</button>
+        <button id="btn-help" class="icon-btn" title="快捷键帮助">?</button>
+        <button id="btn-drawer-right" class="icon-btn tb-drawer" aria-label="打开部件检视">ⓘ</button>
+      </div>
+    </header>
+
+    <aside id="left-panel" class="panel">
+      <div class="panel-head">
+        <div class="panel-title">部件结构树</div>
+        <div class="panel-count mono" id="tree-count">24</div>
+      </div>
+      <div class="search-box"><input id="tree-search" type="text" placeholder="搜索部件（中文 / English）" autocomplete="off" /></div>
+      <div id="tree-groups"></div>
+      <div class="panel-section">
+        <div class="panel-title small">DISPLAY CONTROL</div>
+        <div id="display-switches"></div>
+        <div id="clip-slider-box" class="off">
+          <div class="switch-row"><label>剖切平面 Y</label><span class="mono" id="clip-val">+0.15 m</span></div>
+          <input type="range" id="clip-slider" min="-1.3" max="1.3" step="0.05" value="0.15" />
+        </div>
+        <div class="tree-footer">
+          <span class="mono" id="visible-count">24/24</span><span class="dim"> 可见</span>
+          <button id="btn-show-all" class="mini-btn">全部显示</button>
+        </div>
+      </div>
+    </aside>
+
+    <aside id="right-panel" class="panel">
+      <div class="panel-head">
+        <div class="panel-title">部件检视</div>
+        <div class="panel-count mono" id="inspector-id">OVERVIEW</div>
+      </div>
+      <div id="inspector-scroll"></div>
+    </aside>
+
+    <footer id="bottom-bar">
+      <div class="bb-left">
+        <button id="btn-play" class="play-btn" title="播放/暂停 (Space)">
+          <span class="play-icon" id="play-icon">▶</span><span id="play-label">播放</span>
+        </button>
+        <button id="btn-reverse" class="ctrl-btn" title="反向播放 (R)"><span class="rev-icon">◀</span>反向</button>
+      </div>
+      <div class="bb-center">
+        <div class="bb-labels">
+          <span class="mono dim">ASSEMBLED · 0%</span>
+          <span class="mono pct" id="progress-pct">0%</span>
+          <span class="mono dim">EXPLODED · 100%</span>
+        </div>
+        <div class="slider-track">
+          <div class="seg-marks" id="seg-marks"></div>
+          <input type="range" id="progress-slider" min="0" max="100" step="1" value="0" aria-label="分解进度" />
+        </div>
+        <div class="seg-row" id="seg-row"></div>
+      </div>
+      <div class="bb-right">
+        <button id="btn-reassemble" class="ctrl-btn warn" title="重新装配 (A)">重新装配</button>
+        <button id="btn-reset-view2" class="ctrl-btn" title="重置视角">重置视角</button>
+        <button id="btn-section-view" class="ctrl-btn" title="本体/剖切视图">本体/剖切视图</button>
+      </div>
+    </footer>
+
+    <div id="toast-stack"></div>
+    <div id="drawer-scrim" class="hidden"></div>
+    <div id="help-modal" class="hidden">
+      <div class="help-card">
+        <div class="help-head"><span>操作快捷键</span><button id="btn-help-close" class="mini-btn">关闭 ×</button></div>
+        <div class="help-body" id="help-body"></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

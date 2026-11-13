@@ -1,0 +1,22 @@
+{
+  "name": "turbocore-engine",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "高涵道比涡扇航空发动机交互式 3D 爆炸分解演示 (TURBOCORE style)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.187.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.8"
+  }
+}
